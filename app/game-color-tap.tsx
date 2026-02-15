@@ -20,7 +20,7 @@ import * as Haptics from 'expo-haptics';
 const { width, height } = Dimensions.get('window');
 const GAME_DURATION = 15000;
 const DOT_INTERVAL = 800;
-const DOT_LIFETIME = 1200;
+const DOT_LIFETIME = 1000;
 
 const DOT_COLORS = [
   { color: '#FF3B3B', name: 'red', isTarget: true },
@@ -28,7 +28,6 @@ const DOT_COLORS = [
   { color: '#4ADE80', name: 'green', isTarget: false },
   { color: '#FFD93D', name: 'yellow', isTarget: false },
   { color: '#A855F7', name: 'purple', isTarget: false },
-  { color: '#FF6B35', name: 'orange', isTarget: false },
 ];
 
 interface Dot {
@@ -141,8 +140,20 @@ export default function ColorTapGame() {
     setDots(prev => [...prev, ...newDots]);
 
     setTimeout(() => {
-      setDots(prev => prev.filter(d => !newDots.find(nd => nd.id === d.id)));
-    }, DOT_LIFETIME);
+  setDots(prev => {
+    const remaining = prev.filter(d => !newDots.find(nd => nd.id === d.id));
+
+    const expiredRedDots = newDots.filter(nd =>
+      nd.colorInfo.isTarget && prev.find(p => p.id === nd.id)
+    );
+
+    if (expiredRedDots.length > 0) {
+      setMisses(prevMisses => prevMisses + expiredRedDots.length);
+    }
+
+    return remaining;
+  });
+}, DOT_LIFETIME);
   }, [playAreaHeight]);
 
   const handleDotPress = (dot: Dot) => {
@@ -262,38 +273,22 @@ export default function ColorTapGame() {
 }
 
 function DotComponent({ dot, onPress }: { dot: Dot; onPress: (dot: Dot) => void }) {
-  const scale = useSharedValue(0);
-
-  useEffect(() => {
-    scale.value = withSpring(1, { damping: 12, stiffness: 200 });
-  }, []);
-
-  const animStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
   return (
-    <Animated.View
-      style={[
-        {
-          position: 'absolute',
-          left: dot.x,
-          top: dot.y,
-          width: dot.size,
-          height: dot.size,
-        },
-        animStyle,
-      ]}
+    <View
+      style={{
+        position: 'absolute',
+        left: dot.x,
+        top: dot.y,
+      }}
     >
       <Pressable
         onPress={() => onPress(dot)}
+        hitSlop={{ top: 25, bottom: 25, left: 25, right: 25 }}
         style={{
           width: dot.size,
           height: dot.size,
           borderRadius: dot.size / 2,
           backgroundColor: dot.colorInfo.color,
-          justifyContent: 'center',
-          alignItems: 'center',
           shadowColor: dot.colorInfo.color,
           shadowOffset: { width: 0, height: 0 },
           shadowOpacity: 0.6,
@@ -301,9 +296,10 @@ function DotComponent({ dot, onPress }: { dot: Dot; onPress: (dot: Dot) => void 
           elevation: 8,
         }}
       />
-    </Animated.View>
+    </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

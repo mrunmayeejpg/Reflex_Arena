@@ -75,7 +75,7 @@ export default function WhackMoleGame() {
       setWhackMoleScore(scoreRef.current);
     }, GAME_DURATION);
 
-    let spawnSpeed = 1200;
+    let spawnSpeed = 800;
     let spawnTimer: ReturnType<typeof setTimeout>;
 
     const spawnMole = () => {
@@ -85,15 +85,11 @@ export default function WhackMoleGame() {
         availableIndices.push(i);
       }
 
-      const numMoles = Math.random() > 0.7 ? 2 : 1;
-      const chosen: number[] = [];
-      for (let i = 0; i < numMoles && availableIndices.length > 0; i++) {
-        const randIdx = Math.floor(Math.random() * availableIndices.length);
-        chosen.push(availableIndices[randIdx]);
-        availableIndices.splice(randIdx, 1);
-      }
+      const randIdx = Math.floor(Math.random() * availableIndices.length);
+      const chosen = [availableIndices[randIdx]];
 
-      const duration = 800 + Math.random() * 600;
+
+      const duration = 500 + Math.random() * 200;
       const newMoles: Mole[] = chosen.map(index => ({
         index,
         id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -129,10 +125,18 @@ export default function WhackMoleGame() {
 
   const handleWhack = useCallback((mole: Mole) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    scoreRef.current += 10;
-    whackedRef.current += 1;
-    setScore(scoreRef.current);
-    setWhacked(whackedRef.current);
+    setScore(prev => {
+  const newScore = prev + 10;
+  scoreRef.current = newScore;
+  return newScore;
+});
+
+setWhacked(prev => {
+  const newVal = prev + 1;
+  whackedRef.current = newVal;
+  return newVal;
+});
+
     setMoles(prev => prev.filter(m => m.id !== mole.id));
   }, []);
 
@@ -251,39 +255,36 @@ export default function WhackMoleGame() {
 }
 
 function HoleComponent({ size, mole, onWhack }: { size: number; mole: Mole | null; onWhack: (m: Mole) => void }) {
-  const moleScale = useSharedValue(0);
-
-  useEffect(() => {
-    if (mole) {
-      moleScale.value = withSpring(1, { damping: 8, stiffness: 300 });
-    } else {
-      moleScale.value = withTiming(0, { duration: 150 });
-    }
-  }, [mole]);
-
-  const moleStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: moleScale.value }],
-    opacity: moleScale.value,
-  }));
-
   return (
     <View style={[styles.hole, { width: size, height: size, borderRadius: size / 2 }]}>
       {mole && (
-        <Pressable onPress={() => onWhack(mole)} style={StyleSheet.absoluteFill}>
-          <Animated.View
+        <Pressable
+          onPressIn={() => onWhack(mole)}
+          hitSlop={20}
+          style={StyleSheet.absoluteFill}
+        >
+          <View
             style={[
               styles.mole,
-              { width: size - 12, height: size - 12, borderRadius: (size - 12) / 2 },
-              moleStyle,
+              {
+                width: size - 12,
+                height: size - 12,
+                borderRadius: (size - 12) / 2,
+              },
             ]}
           >
-            <MaterialCommunityIcons name="emoticon-angry" size={size * 0.45} color="#3D2200" />
-          </Animated.View>
+            <MaterialCommunityIcons
+              name="emoticon-angry"
+              size={size * 0.45}
+              color="#3D2200"
+            />
+          </View>
         </Pressable>
       )}
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

@@ -124,10 +124,11 @@ export default function ReactionGame() {
 
     let reactionScore = 0;
     if (avgTime < 200) reactionScore = 100;
-    else if (avgTime < 250) reactionScore = 85;
-    else if (avgTime < 300) reactionScore = 70;
-    else if (avgTime < 350) reactionScore = 55;
-    else if (avgTime < 400) reactionScore = 40;
+    else if (avgTime < 250) reactionScore = 90;
+    else if (avgTime < 300) reactionScore = 85;
+    else if (avgTime < 350) reactionScore = 70;
+    else if (avgTime < 400) reactionScore = 55;
+    else if (avgTime < 450) reactionScore = 40;
     else if (avgTime < 500) reactionScore = 25;
     else reactionScore = 10;
 
