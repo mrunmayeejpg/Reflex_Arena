@@ -42,3 +42,12 @@ eas build --platform android --profile production
 - TypeScript
 - React Query
 - Reanimated & Expo Haptics
+
+  # Varied Results
+  ![reflex1](https://github.com/user-attachments/assets/2e3638da-6527-4592-b53e-b30d1f5d8abf)
+  ![reflex2](https://github.com/user-attachments/assets/2ab9e539-424e-4dc5-b145-5f85f3abe51b)
+  ![reflex3](https://github.com/user-attachments/assets/07a843fc-3ad1-4fa7-b385-8c7731451cbc)
+
+
+
+  
