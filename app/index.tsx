@@ -157,7 +157,7 @@ export default function HomeScreen() {
           <View style={styles.divider} />
 
           <Text style={styles.subtitle}>
-            3 challenges. 1 score.{'\n'}How fast are you?
+            Created by{'\n'}Mrunmayee Kulat
           </Text>
         </Animated.View>
 

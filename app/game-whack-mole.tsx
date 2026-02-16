@@ -75,7 +75,7 @@ export default function WhackMoleGame() {
       setWhackMoleScore(scoreRef.current);
     }, GAME_DURATION);
 
-    let spawnSpeed = 800;
+    let spawnSpeed = 600;
     let spawnTimer: ReturnType<typeof setTimeout>;
 
     const spawnMole = () => {
@@ -89,7 +89,7 @@ export default function WhackMoleGame() {
       const chosen = [availableIndices[randIdx]];
 
 
-      const duration = 500 + Math.random() * 200;
+      const duration = 300 + Math.random() * 100;
       const newMoles: Mole[] = chosen.map(index => ({
         index,
         id: Date.now().toString() + Math.random().toString(36).substr(2, 9),

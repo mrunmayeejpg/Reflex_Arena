@@ -20,7 +20,7 @@ import * as Haptics from 'expo-haptics';
 const { width, height } = Dimensions.get('window');
 const GAME_DURATION = 15000;
 const DOT_INTERVAL = 800;
-const DOT_LIFETIME = 1000;
+const DOT_LIFETIME = 700;
 
 const DOT_COLORS = [
   { color: '#FF3B3B', name: 'red', isTarget: true },
